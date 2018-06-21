@@ -1,18 +1,15 @@
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Imran Peerbhai, 2018
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
 #include "project.h"
 
 uint8 g_shouldBlink = 0;// Create a global flag for the red LED's blink mode.
-CYBLE_CONN_HANDLE_T g_bleConnectionHandle; // A global handle to access the BLE connection system
 enum CONNECTION_SATE { DISCONNECTED=0, CONNECTED } g_bleConnectionState = DISCONNECTED; // Are we connected or not?
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -36,7 +33,7 @@ void UpdateGATTDBWithLedState()
         bleGATTAccessHandlePair.value.val = &g_shouldBlink; // pointer to what data we want to write to GATT
         
         // Update the GATT db
-        CyBle_GattsWriteAttributeValue( &bleGATTAccessHandlePair, 0, &g_bleConnectionHandle, CYBLE_GATT_DB_LOCALLY_INITIATED);
+        CyBle_GattsWriteAttributeValue( &bleGATTAccessHandlePair, 0, &cyBle_connHandle, CYBLE_GATT_DB_LOCALLY_INITIATED);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -107,8 +104,8 @@ void BleCallBackDelegate(uint32 event, void* eventParam)
                 g_shouldBlink = wrReqParam->handleValPair.value.val[0];
                 BlinkTheLED();
                 UpdateGATTDBWithLedState();
-                CyBle_GattsWriteRsp(g_bleConnectionHandle); // Send a response.
             }
+            CyBle_GattsWriteRsp(cyBle_connHandle); // Send a response.
             break;
             
         default:
@@ -116,8 +113,11 @@ void BleCallBackDelegate(uint32 event, void* eventParam)
     }        
 }
 
-
-
+//---------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
+// This code is designed to be a simple "read and write BLE GATT" experiment to verify I understand the concepts correctly.
+//---------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
