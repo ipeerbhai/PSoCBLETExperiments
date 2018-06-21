@@ -123,7 +123,6 @@ int main(void)
     CyGlobalIntEnable; /* Enable global interrupts. */
     CyBle_Start(BleCallBackDelegate);
     
-    pwm_Start(); // Let's default to blue LED on and red LED blinking.
     // install the button ISR handler
     isrButtonPushed_StartEx( isrButtonPushed_Handler );
 
